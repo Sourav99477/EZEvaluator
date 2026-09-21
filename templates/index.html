@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EZEvaluator</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #f4f7fb;
+            font-family: "Manrope", sans-serif;
+            color: #102a43;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 36px auto;
+        }
+
+        .container {
+            background: #ffffff;
+            border: 1px solid #dce5f0;
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: 0 8px 30px rgba(28, 58, 92, 0.06);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin-bottom: 32px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: #edf3ff;
+            color: #5278df;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-icon svg {
+            width: 27px;
+            height: 27px;
+        }
+
+        .brand-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #18324f;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-name strong {
+            color: #5278df;
+            font-weight: 800;
+        }
+
+        .top-section {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .title {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            margin: 8px 0 0;
+            color: #718096;
+            font-size: 15px;
+        }
+
+        .pdf-badge {
+            flex-shrink: 0;
+            padding: 11px 15px;
+            border-radius: 11px;
+            background: #edf3ff;
+            color: #4f73d9;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .upload-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .upload-section {
+            min-width: 0;
+        }
+
+        .section-number {
+            font-size: 15px;
+            font-weight: 800;
+            color: #102a43;
+            margin-bottom: 4px;
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .section-description {
+            margin: 5px 0 12px;
+            font-size: 14px;
+            color: #718096;
+            min-height: 21px;
+        }
+
+        .drop-zone {
+            min-height: 260px;
+            border: 1.5px dashed #b9cbe5;
+            border-radius: 17px;
+            background: #f9fbfe;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px 16px;
+            transition: 0.2s ease;
+            cursor: pointer;
+        }
+
+        .drop-zone:hover {
+            border-color: #5b7fe2;
+            background: #f5f8ff;
+        }
+
+        .drop-zone.dragover {
+            border-color: #4f73d9;
+            background: #eef4ff;
+            transform: translateY(-1px);
+        }
+
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #edf3ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .upload-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: #557be0;
+        }
+
+        .drop-title {
+            font-size: 17px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .drop-subtitle {
+            color: #8290a3;
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+
+        .choose-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 128px;
+            height: 46px;
+            padding: 0 18px;
+            border: none;
+            border-radius: 10px;
+            background: #5278df;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .choose-button:hover {
+            background: #4168d3;
+            transform: translateY(-1px);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-hint {
+            margin-top: 16px;
+            font-size: 12px;
+            color: #8a98aa;
+        }
+
+        .file-preview {
+            margin-top: 12px;
+            min-height: 76px;
+            background: #f5f8fc;
+            border: 1px solid #dce5f0;
+            border-radius: 13px;
+            padding: 13px 14px;
+            display: none;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .file-preview.show {
+            display: flex;
+        }
+
+        .file-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: #eaf0ff;
+            color: #4f73d9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .file-info {
+            min-width: 0;
+            flex: 1;
+            text-align: left;
+        }
+
+        .file-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: #19324d;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-size {
+            margin-top: 3px;
+            font-size: 12px;
+            color: #8290a3;
+        }
+
+        .remove-button {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #d2dbe7;
+            background: #ffffff;
+            border-radius: 7px;
+            color: #506070;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .remove-button:hover {
+            background: #f0f3f7;
+        }
+
+        .action-section {
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid #e5ebf2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .action-text h3 {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .action-text p {
+            margin: 5px 0 0;
+            color: #7b899a;
+            font-size: 13px;
+        }
+
+        .evaluate-button {
+            min-width: 180px;
+            height: 48px;
+            border: none;
+            border-radius: 11px;
+            background: #5278df;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .evaluate-button:hover:not(:disabled) {
+            background: #4168d3;
+            transform: translateY(-1px);
+        }
+
+        .evaluate-button:disabled {
+            background: #b7c5dd;
+            cursor: not-allowed;
+        }
+
+        .results-panel {
+            margin-top: 28px;
+            display: none;
+        }
+
+        .results-panel.show {
+            display: block;
+        }
+
+        .results-header {
+            margin-bottom: 16px;
+        }
+
+        .results-header h2 {
+            margin: 0;
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .results-header p {
+            margin: 5px 0 0;
+            color: #7b899a;
+            font-size: 13px;
+        }
+
+        .results-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .result-card {
+            border: 1px solid #dce5f0;
+            border-radius: 13px;
+            padding: 15px 17px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .result-question {
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .result-status {
+            font-size: 12px;
+            font-weight: 800;
+            padding: 8px 11px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        .status-correct {
+            background: #e8f7ee;
+            color: #20804b;
+        }
+
+        .status-review {
+            background: #fff5dc;
+            color: #9a6b00;
+        }
+
+        .status-incorrect {
+            background: #fdeaea;
+            color: #b33a3a;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 18px;
+            text-align: center;
+            color: #6e7e91;
+            font-size: 13px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .error-message {
+            display: none;
+            margin-top: 16px;
+            padding: 13px 15px;
+            border-radius: 10px;
+            background: #fff0f0;
+            border: 1px solid #f0cccc;
+            color: #a33b3b;
+            font-size: 13px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 900px) {
+            .upload-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .drop-zone {
+                min-height: 230px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .page {
+                width: min(100% - 20px, 1180px);
+                margin: 10px auto;
+            }
+
+            .container {
+                padding: 22px 16px;
+                border-radius: 18px;
+            }
+
+            .brand {
+                margin-bottom: 24px;
+            }
+
+            .top-section {
+                margin-bottom: 25px;
+            }
+
+            .title {
+                font-size: 22px;
+            }
+
+            .subtitle {
+                font-size: 13px;
+            }
+
+            .pdf-badge {
+                padding: 9px 11px;
+                font-size: 12px;
+            }
+
+            .action-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .evaluate-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="container">
+
+        <div class="brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 48 48" fill="none">
+                    <rect x="8" y="5" width="32" height="38" rx="6"
+                        stroke="currentColor" stroke-width="3"/>
+                    <path d="M16 16H32"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M16 23H27"
+                        stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M16 32L20 36L31 25"
+                        stroke="currentColor"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <span class="brand-name"><strong>EZ</strong>Evaluator</span>
+        </div>
+
+
+        <div class="top-section">
+
+            <div>
+                <h1 class="title">Evaluate Answer Paper</h1>
+                <p class="subtitle">
+                    Upload all three documents to begin evaluation.
+                </p>
+            </div>
+
+            <div class="pdf-badge">PDF</div>
+
+        </div>
+
+
+        <div class="upload-grid">
+
+
+            <section class="upload-section">
+
+                <div class="section-number">01</div>
+
+                <h2 class="section-title">
+                    Question Paper
+                </h2>
+
+                <p class="section-description">
+                    Upload the questions.
+                </p>
+
+                <div class="drop-zone" id="questionDropZone">
+
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+                            <path d="M12 16V4"></path>
+                            <path d="M7.5 8.5L12 4L16.5 8.5"></path>
+                            <path d="M5 20H19"></path>
+                        </svg>
+                    </div>
+
+                    <div class="drop-title">
+                        Drop question PDF here
+                    </div>
+
+                    <div class="drop-subtitle">
+                        or choose a file from your device
+                    </div>
+
+                    <button
+                        type="button"
+                        class="choose-button"
+                        id="questionChooseButton">
+                        Choose PDF
+                    </button>
+
+                    <input
+                        type="file"
+                        id="questionInput"
+                        class="file-input"
+                        accept="application/pdf,.pdf"
+                    >
+
+                    <div class="file-hint">
+                        PDF files only · Maximum size 20 MB
+                    </div>
+
+                </div>
+
+
+                <div class="file-preview" id="questionPreview">
+
+                    <div class="file-icon">
+                        PDF
+                    </div>
+
+                    <div class="file-info">
+
+                        <div
+                            class="file-name"
+                            id="questionFileName">
+                        </div>
+
+                        <div
+                            class="file-size"
+                            id="questionFileSize">
+                        </div>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="remove-button"
+                        id="removeQuestion">
+                        ×
+                    </button>
+
+                </div>
+
+            </section>
+
+
+
+            <section class="upload-section">
+
+                <div class="section-number">02</div>
+
+                <h2 class="section-title">
+                    Teacher Answer Key
+                </h2>
+
+                <p class="section-description">
+                    Upload the expected answers.
+                </p>
+
+                <div class="drop-zone" id="keyDropZone">
+
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+                            <path d="M12 16V4"></path>
+                            <path d="M7.5 8.5L12 4L16.5 8.5"></path>
+                            <path d="M5 20H19"></path>
+                        </svg>
+                    </div>
+
+                    <div class="drop-title">
+                        Drop answer key PDF here
+                    </div>
+
+                    <div class="drop-subtitle">
+                        or choose a file from your device
+                    </div>
+
+                    <button
+                        type="button"
+                        class="choose-button"
+                        id="keyChooseButton">
+                        Choose PDF
+                    </button>
+
+                    <input
+                        type="file"
+                        id="keyInput"
+                        class="file-input"
+                        accept="application/pdf,.pdf"
+                    >
+
+                    <div class="file-hint">
+                        PDF files only · Maximum size 20 MB
+                    </div>
+
+                </div>
+
+
+                <div class="file-preview" id="keyPreview">
+
+                    <div class="file-icon">
+                        PDF
+                    </div>
+
+                    <div class="file-info">
+
+                        <div
+                            class="file-name"
+                            id="keyFileName">
+                        </div>
+
+                        <div
+                            class="file-size"
+                            id="keyFileSize">
+                        </div>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="remove-button"
+                        id="removeKey">
+                        ×
+                    </button>
+
+                </div>
+
+            </section>
+
+
+
+            <section class="upload-section">
+
+                <div class="section-number">03</div>
+
+                <h2 class="section-title">
+                    Handwritten Answers
+                </h2>
+
+                <p class="section-description">
+                    Upload the student's answer paper.
+                </p>
+
+                <div class="drop-zone" id="answerDropZone">
+
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+                            <path d="M12 16V4"></path>
+                            <path d="M7.5 8.5L12 4L16.5 8.5"></path>
+                            <path d="M5 20H19"></path>
+                        </svg>
+                    </div>
+
+                    <div class="drop-title">
+                        Drop handwritten PDF here
+                    </div>
+
+                    <div class="drop-subtitle">
+                        or choose a file from your device
+                    </div>
+
+                    <button
+                        type="button"
+                        class="choose-button"
+                        id="answerChooseButton">
+                        Choose PDF
+                    </button>
+
+                    <input
+                        type="file"
+                        id="answerInput"
+                        class="file-input"
+                        accept="application/pdf,.pdf"
+                    >
+
+                    <div class="file-hint">
+                        PDF files only · Maximum size 20 MB
+                    </div>
+
+                </div>
+
+
+                <div class="file-preview" id="answerPreview">
+
+                    <div class="file-icon">
+                        PDF
+                    </div>
+
+                    <div class="file-info">
+
+                        <div
+                            class="file-name"
+                            id="answerFileName">
+                        </div>
+
+                        <div
+                            class="file-size"
+                            id="answerFileSize">
+                        </div>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="remove-button"
+                        id="removeAnswer">
+                        ×
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+
+        <div class="action-section">
+
+            <div class="action-text">
+
+                <h3>
+                    Ready to evaluate?
+                </h3>
+
+                <p>
+                    All three PDF documents are required.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="evaluate-button"
+                id="evaluateBtn"
+                disabled>
+                Evaluate Answer Paper
+            </button>
+
+        </div>
+
+
+        <div
+            class="loading"
+            id="loading">
+            Evaluating answer paper...
+        </div>
+
+
+        <div
+            class="error-message"
+            id="errorMessage">
+        </div>
+
+
+        <div
+            class="results-panel"
+            id="resultsPanel">
+
+            <div class="results-header">
+
+                <h2>
+                    Evaluation Results
+                </h2>
+
+                <p>
+                    AI-assisted classification of the submitted answers.
+                </p>
+
+            </div>
+
+            <div
+                class="results-list"
+                id="resultsList">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const MAX_FILE_SIZE = 20 * 1024 * 1024;
+
+    let questionFile = null;
+    let keyFile = null;
+    let answerFile = null;
+
+
+    const questionInput =
+        document.getElementById("questionInput");
+
+    const keyInput =
+        document.getElementById("keyInput");
+
+    const answerInput =
+        document.getElementById("answerInput");
+
+
+    const questionDropZone =
+        document.getElementById("questionDropZone");
+
+    const keyDropZone =
+        document.getElementById("keyDropZone");
+
+    const answerDropZone =
+        document.getElementById("answerDropZone");
+
+
+    const questionChooseButton =
+        document.getElementById("questionChooseButton");
+
+    const keyChooseButton =
+        document.getElementById("keyChooseButton");
+
+    const answerChooseButton =
+        document.getElementById("answerChooseButton");
+
+
+    const questionPreview =
+        document.getElementById("questionPreview");
+
+    const keyPreview =
+        document.getElementById("keyPreview");
+
+    const answerPreview =
+        document.getElementById("answerPreview");
+
+
+    const questionFileName =
+        document.getElementById("questionFileName");
+
+    const keyFileName =
+        document.getElementById("keyFileName");
+
+    const answerFileName =
+        document.getElementById("answerFileName");
+
+
+    const questionFileSize =
+        document.getElementById("questionFileSize");
+
+    const keyFileSize =
+        document.getElementById("keyFileSize");
+
+    const answerFileSize =
+        document.getElementById("answerFileSize");
+
+
+    const removeQuestion =
+        document.getElementById("removeQuestion");
+
+    const removeKey =
+        document.getElementById("removeKey");
+
+    const removeAnswer =
+        document.getElementById("removeAnswer");
+
+
+    const evaluateBtn =
+        document.getElementById("evaluateBtn");
+
+    const resultsPanel =
+        document.getElementById("resultsPanel");
+
+    const resultsList =
+        document.getElementById("resultsList");
+
+    const loading =
+        document.getElementById("loading");
+
+    const errorMessage =
+        document.getElementById("errorMessage");
+
+
+
+    function formatFileSize(bytes) {
+
+        if (bytes < 1024) {
+            return bytes + " B";
+        }
+
+        if (bytes < 1024 * 1024) {
+            return (bytes / 1024).toFixed(1) + " KB";
+        }
+
+        return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+    }
+
+
+
+    function validateFile(file) {
+
+        if (!file) {
+            return false;
+        }
+
+        const isPdf =
+            file.type === "application/pdf" ||
+            file.name.toLowerCase().endsWith(".pdf");
+
+        if (!isPdf) {
+            showError("Please upload PDF files only.");
+            return false;
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+            showError("Each PDF must be smaller than 20 MB.");
+            return false;
+        }
+
+        clearError();
+
+        return true;
+    }
+
+
+
+    function updatePreview(type, file) {
+
+        let preview;
+        let name;
+        let size;
+
+        if (type === "question") {
+
+            preview = questionPreview;
+            name = questionFileName;
+            size = questionFileSize;
+
+        } else if (type === "key") {
+
+            preview = keyPreview;
+            name = keyFileName;
+            size = keyFileSize;
+
+        } else {
+
+            preview = answerPreview;
+            name = answerFileName;
+            size = answerFileSize;
+        }
+
+        name.textContent = file.name;
+        size.textContent = formatFileSize(file.size);
+
+        preview.classList.add("show");
+    }
+
+
+
+    function setFile(type, file) {
+
+        if (!validateFile(file)) {
+            return;
+        }
+
+        if (type === "question") {
+
+            questionFile = file;
+
+        } else if (type === "key") {
+
+            keyFile = file;
+
+        } else {
+
+            answerFile = file;
+        }
+
+        updatePreview(type, file);
+        updateEvaluateButton();
+    }
+
+
+
+    function updateEvaluateButton() {
+
+        evaluateBtn.disabled =
+            !(questionFile && keyFile && answerFile);
+    }
+
+
+
+    function clearFile(type) {
+
+        if (type === "question") {
+
+            questionFile = null;
+            questionInput.value = "";
+            questionPreview.classList.remove("show");
+
+        } else if (type === "key") {
+
+            keyFile = null;
+            keyInput.value = "";
+            keyPreview.classList.remove("show");
+
+        } else {
+
+            answerFile = null;
+            answerInput.value = "";
+            answerPreview.classList.remove("show");
+        }
+
+        updateEvaluateButton();
+    }
+
+
+
+    function showError(message) {
+
+        errorMessage.textContent = message;
+        errorMessage.classList.add("show");
+    }
+
+
+
+    function clearError() {
+
+        errorMessage.textContent = "";
+        errorMessage.classList.remove("show");
+    }
+
+
+
+    questionChooseButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            questionInput.click();
+        }
+    );
+
+
+
+    keyChooseButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            keyInput.click();
+        }
+    );
+
+
+
+    answerChooseButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            answerInput.click();
+        }
+    );
+
+
+
+    questionInput.addEventListener(
+        "change",
+        function() {
+
+            if (this.files.length) {
+                setFile("question", this.files[0]);
+            }
+        }
+    );
+
+
+
+    keyInput.addEventListener(
+        "change",
+        function() {
+
+            if (this.files.length) {
+                setFile("key", this.files[0]);
+            }
+        }
+    );
+
+
+
+    answerInput.addEventListener(
+        "change",
+        function() {
+
+            if (this.files.length) {
+                setFile("answer", this.files[0]);
+            }
+        }
+    );
+
+
+
+    function setupDropZone(zone, type) {
+
+        zone.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target.classList.contains(
+                        "choose-button"
+                    )
+                ) {
+                    return;
+                }
+
+                if (type === "question") {
+
+                    questionInput.click();
+
+                } else if (type === "key") {
+
+                    keyInput.click();
+
+                } else {
+
+                    answerInput.click();
+                }
+            }
+        );
+
+
+        zone.addEventListener(
+            "dragover",
+            function(event) {
+
+                event.preventDefault();
+
+                zone.classList.add("dragover");
+            }
+        );
+
+
+        zone.addEventListener(
+            "dragleave",
+            function() {
+
+                zone.classList.remove("dragover");
+            }
+        );
+
+
+        zone.addEventListener(
+            "drop",
+            function(event) {
+
+                event.preventDefault();
+
+                zone.classList.remove("dragover");
+
+                const file =
+                    event.dataTransfer.files[0];
+
+                if (file) {
+                    setFile(type, file);
+                }
+            }
+        );
+    }
+
+
+
+    setupDropZone(
+        questionDropZone,
+        "question"
+    );
+
+    setupDropZone(
+        keyDropZone,
+        "key"
+    );
+
+    setupDropZone(
+        answerDropZone,
+        "answer"
+    );
+
+
+
+    removeQuestion.addEventListener(
+        "click",
+        function() {
+
+            clearFile("question");
+        }
+    );
+
+
+    removeKey.addEventListener(
+        "click",
+        function() {
+
+            clearFile("key");
+        }
+    );
+
+
+    removeAnswer.addEventListener(
+        "click",
+        function() {
+
+            clearFile("answer");
+        }
+    );
+
+
+
+    evaluateBtn.addEventListener(
+        "click",
+        async function() {
+
+            if (
+                !questionFile ||
+                !keyFile ||
+                !answerFile
+            ) {
+
+                showError(
+                    "Please upload all three PDF files."
+                );
+
+                return;
+            }
+
+
+            clearError();
+
+            evaluateBtn.disabled = true;
+
+            loading.classList.add("show");
+
+            resultsPanel.classList.remove("show");
+
+            resultsList.innerHTML = "";
+
+
+            const formData = new FormData();
+
+            formData.append(
+                "question_pdf",
+                questionFile
+            );
+
+            formData.append(
+                "key_pdf",
+                keyFile
+            );
+
+            formData.append(
+                "answer_pdf",
+                answerFile
+            );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/evaluate",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        "Evaluation failed."
+                    );
+                }
+
+
+                renderResults(data);
+
+
+            } catch (error) {
+
+                showError(
+                    error.message ||
+                    "Something went wrong while evaluating the answer paper."
+                );
+
+
+            } finally {
+
+                loading.classList.remove("show");
+
+                updateEvaluateButton();
+            }
+        }
+    );
+
+
+
+    function renderResults(data) {
+
+        const results =
+            data.results ||
+            data.predictions ||
+            [];
+
+
+        if (!results.length) {
+
+            showError(
+                "No evaluation results were returned."
+            );
+
+            return;
+        }
+
+
+        resultsList.innerHTML = "";
+
+
+        results.forEach(
+            (result, index) => {
+
+                let status = "";
+
+
+                if (typeof result === "string") {
+
+                    status = result;
+
+                } else {
+
+                    status =
+                        result.status ||
+                        result.label ||
+                        result.prediction ||
+                        result.result ||
+                        "";
+                }
+
+
+                const normalized =
+                    String(status).toLowerCase();
+
+
+                let statusClass =
+                    "status-review";
+
+
+                if (
+                    normalized.includes("correct") &&
+                    !normalized.includes("incorrect")
+                ) {
+
+                    statusClass =
+                        "status-correct";
+
+                } else if (
+                    normalized.includes("incorrect")
+                ) {
+
+                    statusClass =
+                        "status-incorrect";
+                }
+
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "result-card";
+
+
+                const question =
+                    document.createElement("div");
+
+                question.className =
+                    "result-question";
+
+
+                question.textContent =
+                    typeof result === "object" &&
+                    result.question_number
+                        ? "Question " +
+                          result.question_number
+                        : "Question " +
+                          (index + 1);
+
+
+                const badge =
+                    document.createElement("div");
+
+                badge.className =
+                    "result-status " +
+                    statusClass;
+
+
+                badge.textContent =
+                    status ||
+                    "Needs Teacher Review";
+
+
+                card.appendChild(question);
+
+                card.appendChild(badge);
+
+                resultsList.appendChild(card);
+            }
+        );
+
+
+        resultsPanel.classList.add("show");
+    }
+
+</script>
+
+</body>
+</html>
