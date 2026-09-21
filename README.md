@@ -341,8 +341,5 @@ Rather than fully automating academic evaluation, the system focuses on assistin
 
 Sourav R
 
-B.Tech Information Technology
-Government Engineering College Sreekrishnapuram
-
 GitHub:
 https://github.com/Sourav99477
